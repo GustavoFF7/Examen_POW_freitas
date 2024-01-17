@@ -15,6 +15,8 @@ io.on('connection', socket=> {
         // emitiendo su propio evento
         if (room === "") { // si esta en una room, envia el mensaje a esa room
             socket.broadcast.emit('receive-message', message) // sino mandalo a todos
+        } else if (room == "Privado"){
+            socket.to(room).emit('receive-message', message + " Desde Privado")
         } else {
             socket.to(room).emit('receive-message', message)
         }
