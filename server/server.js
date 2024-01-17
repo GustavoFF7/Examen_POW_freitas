@@ -1,7 +1,6 @@
 const io = require('socket.io')(3000, { // el puerto donde se ubica el server
     cors: {
-        origin: ['http://localhost:5173' , 'http://172.16.5.4:5173', 'http://127.0.0.1:5173/'] 
-        // origen de donde se conectan los clients
+        origin: ['http://localhost:5173' , 'http://172.16.5.4:5173', 'http://127.0.0.1:5173']        // origen de donde se conectan los clients
     }
 })
 
