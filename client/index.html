@@ -10,13 +10,14 @@
         margin: 0 auto;
         display: flex;
         justify-content: center;
+        align-items: center;
         flex-direction: column;
         height: 100vh;
         width: 90%;
         max-width: 1200px;
       }
       #message-container {
-        height: 50vh;
+        height: 30vh;
         border: 1px solid black;
         flex-grow: 1;
         overflow-y: auto;
@@ -28,12 +29,43 @@
       #form {
         margin: 10px;
       }
+      #palabra-container {
+        display: flex;
+        justify-content: center;
+        height: 80px;
+      }
+      #palabra-container span {
+        margin: 5px;
+        font-size: 64px;
+        text-align: center;
+        border-bottom: 2px solid black;
+        width: 43px;
+      }
+      hangman-container {
+        display: flex;
+        justify-content: center;
+      }
     </style>
     
     <title>Document</title>
   </head>
   <body>
     <div class="main-container">
+      <div class="hangman-container">
+        <svg width="500" height="500" viewBox="0 0 500 500" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="500" height="500" fill="white"/>
+          <path id="piso" fill-rule="evenodd" clip-rule="evenodd" d="M130 414H110H60C54.5 414 50 417.6 50 422C50 426.4 54.5 430 60 430H180C185.5 430 190 426.4 190 422C190 417.6 185.5 414 180 414H130Z" />
+          <path id="palo" fill-rule="evenodd" clip-rule="evenodd" d="M370 78V86H350H224L130 161.2V414H110V78C110 73.6 114.5 70 120 70H360C365.5 70 370 73.6 370 78ZM130 138.8V86H196L130 138.8Z" />
+          <path id="cuerda" fill-rule="evenodd" clip-rule="evenodd" d="M350 86V150.8H370V86H350Z"/>
+          <path id="cabeza" fill-rule="evenodd" clip-rule="evenodd" d="M300 198C300 221.6 321.5 241.6 350 245.2H370C398.5 241.2 420 221.6 420 198C420 174.4 398.5 154.4 370 150.8H350C321.5 154.8 300 174.4 300 198ZM320 198C320 180.4 338 166 360 166C382 166 400 180.4 400 198C400 215.6 382 230 360 230C338 230 320 215.6 320 198Z" />
+          <path id="cuerpo" fill-rule="evenodd" clip-rule="evenodd" d="M370 264.4V245.2H350V264.4V281.6V347.2H370V281.6V264.4Z" />
+          <path id="brazos" fill-rule="evenodd" clip-rule="evenodd" d="M443.5 286.4L370 264.4H350L276.5 286.4C271.5 288 268.5 292.4 270.5 296.8C272 300 276 302 280 302C281 302 282.5 302 283.5 301.6L350 281.6H352.5H370L436.5 301.6C437.5 302 439 302 440 302C444 302 448 300 449.5 296.8C451.5 292.8 448.5 288 443.5 286.4Z" />
+          <path id="pies" fill-rule="evenodd" clip-rule="evenodd" d="M370 347.2H350L302.5 392.8C299 396 299.5 401.2 304 404C306 405.2 308 406 310.5 406C313.5 406 316 405.2 318 403.2L360 362.4L402.5 403.2C404.5 405.2 407.5 406 410 406C412.5 406 414.5 405.2 416.5 404C420.5 401.2 421.5 396 418 392.8L370 347.2Z" />
+        </svg>
+      </div>
+      <div id="palabra-container">
+
+      </div>
       <div id="message-container"></div>
       <form id="form">
         <label for="message-input">Message</label>
