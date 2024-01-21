@@ -6,6 +6,7 @@ const io = require('socket.io')(3000, { // el puerto donde se ubica el server
 
 let hangman_ids = ["piso","palo","cuerda","cabeza","cuerpo","brazos","pies"]
 let cont = 0;
+let jugadoresID = []
 
 let palabra = "paralelepipedo"
 function checkLetra (letra) {
@@ -24,6 +25,27 @@ function checkLetra (letra) {
     }
 }
 
+
+
+function ADDjugador (socketID) {
+    jugadoresID.push({ID : socketID, turno : false})
+}
+
+function turnosHandler (socketID) {
+    let available = true
+    for (const jugador of jugadoresID) {
+        if (jugador.ID === socketID) {
+            jugador.turno = true
+            break
+        }
+        if (jugador.turno === false) {
+            io.emit('turno-de', jugador.ID)
+            return
+        }
+
+    }
+}
+
 function getLetraIndex (letra) {
     let indices = [];
     for (let i = 0; i < palabra.length; i++) {
@@ -37,7 +59,7 @@ function getLetraIndex (letra) {
 io.on('connection', socket=> {
     cont=0;
     console.log(socket.id) // cada vez que hay connection, se imprime el id
-    io.emit('palabra-size', palabra.length)
+    io.to(socket.id).emit('palabra-size', palabra.length)
     socket.on('send-message', (message, room) => { //mensaje cuando sucede el evento "send-message"
         checkLetra(message)
         // el servidor al recibir el mensaje, responde a todos menos al que lo envio 

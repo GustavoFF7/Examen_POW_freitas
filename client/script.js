@@ -23,6 +23,16 @@ socket.on('palabra-size', (size) => {
     }
 })
 
+socket.on('turno-de', (id) => {
+    if (id === socket.id) {
+        document.getElementById('send-button').disabled = false
+        document.getElementById('turno').textContent = "Es tu turno"
+    } else {
+        document.getElementById('send-button').disabled = true
+        document.getElementById('turno').textContent = "No es tu turno"
+    }
+})
+
 socket.on('letra-erronea',  (id)  => {
     document.getElementById(id).style.fill = "black"
 })
