@@ -1,5 +1,7 @@
 import { io} from 'socket.io-client'
 
+const closeBtn = document.getElementById('closeModal')
+const modal = document.getElementById('modal')
 const joinRoomButton = document.getElementById('room-button')
 const messageInput = document.getElementById('message-input')
 const roomInput = document.getElementById('room-input')
@@ -12,6 +14,20 @@ socket.on('connect', () => { //mensaje cuando sucede el evento "connect"
 
 socket.on('receive-message', (message) => { //mensaje cuando sucede el evento "connect"
     displayMessage(`mensaje recibido: ${message}`)
+})
+
+socket.on('perdiste', () => {
+    document.getElementById('resultado').textContent = "Perdiste manito";
+    modal.classList.add('open');
+})
+
+socket.on('ganaste', () => {
+    document.getElementById('resultado').textContent = "Ganaste locotron";
+    modal.classList.add('open');
+})
+
+closeBtn.addEventListener('click', () => {
+    modal.classList.remove('open');
 })
 
 socket.on('palabra-size', (size) => {
