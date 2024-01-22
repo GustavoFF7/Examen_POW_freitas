@@ -9,23 +9,23 @@
 1. Abrir la consola dos consolas y en caso de estar trabajando en local dirigirse al directorio de la aplicacion en ambas consolas
 2. En la consola 1 entrar a la carpeta "client"
 
-cd client
+```cd client```
 
 3. Una vez entramos a la carpeta instalamos las dependencias en cliente
 
-npm install
+```npm install```
 
 4. En la consola 2 entrar a la carpeta "server"
 
-cd server
+```cd server```
 
 5. Una vez entramos en la carpeta instalamos las dependencias en el Server
 
-npm install
+```npm install```
 
 6. Para levantar los servidores en cada consola ejecutar
 
-npm run dev
+```npm run dev```
 
 7. En su navegador de preferencia abra "http://localhost:5173"
 8. Juegue!
