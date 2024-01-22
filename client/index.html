@@ -11,6 +11,7 @@
     <div class="modal" id="modal">
       <div class="modal-inner">
         <h2 id="resultado"></h2>
+        <h4 id="palabra-msg"></h4>
         <p>Esperando al Anfitrion</p>
         <button id="closeModal">Cerrar</button>
       </div>
@@ -33,14 +34,17 @@
         <!-- este contenido se autogenera con el evento de palabra-size -->
       </div>
       <div id="message-container"></div>
-      <h2 id="turno">No es tu turno</h2>
+      <div class="turno-error-container">
+        <h2 id="turno">No es tu turno</h2>
+        <h3 id="errores"></h3>
+      </div>
       <form id="form">
-        <label for="message-input">Message</label>
+        <label for="message-input">Mensaje  </label>
         <input type="text" id="message-input" maxlength="1"/>
-        <button type="submit" id="send-button">Send</button>
-        <label for="room-input"></label>
-        <input type="text" id="room-input">
-        <button id="room-button">Join</button>
+        <button type="submit" id="send-button">Enviar</button>
+        <label for="room-input" style="display: none;"></label>
+        <input type="text" id="room-input" style="display: none;">
+        <button id="room-button" style="display: none;">Join</button>
       </form>
     </div>
     <script type="module" src="/script.js"></script>

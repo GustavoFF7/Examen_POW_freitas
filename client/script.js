@@ -7,17 +7,19 @@ const messageInput = document.getElementById('message-input')
 const roomInput = document.getElementById('room-input')
 const form = document.getElementById('form')
 const socket = io('http://localhost:3000')
+const hangman_ids = ["piso","palo","cuerda","cabeza","cuerpo","brazos","pies"]
 
 socket.on('connect', () => { //mensaje cuando sucede el evento "connect"
-    displayMessage(`you connected with id: ${socket.id}`)
+    displayMessage(`Te has conectado con la ID : ${socket.id}`)
 })
 
-socket.on('receive-message', (message) => { //mensaje cuando sucede el evento "connect"
-    displayMessage(`mensaje recibido: ${message}`)
+socket.on('receive-message', (message , id) => { //mensaje cuando sucede el evento "connect"
+    displayMessage(`${id} envio : ${message.toUpperCase()}`)
 })
 
-socket.on('perdiste', () => {
+socket.on('perdiste', (palabra) => {
     document.getElementById('resultado').textContent = "Perdiste manito";
+    document.getElementById('palabra-msg').textContent = "La palabra era: " + palabra;
     modal.classList.add('open');
 })
 
@@ -28,6 +30,8 @@ socket.on('ganaste', () => {
 
 closeBtn.addEventListener('click', () => {
     modal.classList.remove('open');
+    socket.emit('reiniciar-partida')
+    resetHangman()
 })
 
 socket.on('palabra-size', (size) => {
@@ -39,13 +43,22 @@ socket.on('palabra-size', (size) => {
     }
 })
 
-socket.on('turno-de', (id) => {
+socket.on('vaciar-palabra', (size) => {
+    for (let i = 0; i < size; i++) {
+        const letra = document.getElementById(i)
+        document.getElementById('palabra-container').removeChild(letra)
+    }
+})
+
+socket.on('turno-de', (id, cont=0) => {
     if (id === socket.id) {
         document.getElementById('send-button').disabled = false
         document.getElementById('turno').textContent = "Es tu turno"
+        document.getElementById('errores').textContent = "Numero de Errores: " + cont
     } else {
         document.getElementById('send-button').disabled = true
         document.getElementById('turno').textContent = "No es tu turno"
+        document.getElementById('errores').textContent = "Numero de Errores: " + cont
     }
 })
 
@@ -65,7 +78,7 @@ form.addEventListener('submit', e => {
     const room = roomInput.value
     
     if (message === '') return
-    displayMessage(message)
+    displayMessage(message.toUpperCase())
     socket.emit('send-message', message, room)
     
 
@@ -81,4 +94,10 @@ function displayMessage(message) {
     const div = document.createElement('div')
     div.textContent = message
     document.getElementById('message-container').append(div)
+}
+
+function resetHangman() {
+    hangman_ids.forEach(element => {
+        document.getElementById(element).style.fill = "none"
+    });
 }

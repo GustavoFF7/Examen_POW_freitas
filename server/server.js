@@ -11,22 +11,37 @@ let jugadoresID = []
 let palabra = ""
 let letrasRestantes = ""
 
+let letrasCorrectas = []
+let letrasIncorrectas = []
+
+
 async function getWord() {
     await fetch('https://pow-3bae6d63ret5.deno.dev/word').then(res => res.json()).then(data => {
-        palabra = data.word
+        palabra = quitarTildes(data.word)
         letrasRestantes = palabra
     })
     console.log(palabra)
 }
 
 getWord()
-console.log(palabra)
+
+function quitarTildes(palabra) {
+    // Definir un objeto con las letras y su correspondiente sin tilde
+    const tildes = {
+        'á': 'a',
+        'é': 'e',
+        'í': 'i',
+        'ó': 'o',
+        'ú': 'u'
+    };
+    const palabraSinTildes = palabra.replace(/[áéíóúü]/g, letra => tildes[letra] || letra);
+    return palabraSinTildes;
+}
 
 
 function removerLetras (letra) {
     let patron = new RegExp(letra, "g")
     letrasRestantes = letrasRestantes.replace(patron, "")
-    console.log(letrasRestantes)
     if (letrasRestantes.length === 0) {
         console.log("ganaste");
         io.emit('ganaste')
@@ -36,18 +51,19 @@ function removerLetras (letra) {
 
 function checkLetra (letra) { //revisa si la letra esta en la palabra
     if ( palabra.includes(letra)) {
-        console.log("letra-correcta"); //imprime que la palabra es correcta en consola del server
         let indices = getLetraIndex(letra) // consigue los indices de la letra en la palabra
         removerLetras(letra)
+        letrasCorrectas.push(letra)
         io.emit('letra-correcta', indices , letra)  // emit el evento letra-correcta a todos los users y les pasa los indices y la letra  
     } else {
-        console.log("letra-erronea"); //imprime que la palabra es incorrecta en consola del server
         if (cont < 7) { // si el numero de errores es a menor a 7 envia el evento letra-erronea
+            letrasIncorrectas.push(letra)
             io.emit('letra-erronea', hangman_ids[cont])
             cont = cont + 1; //aumenta el contador
             if (cont === 7){
                 console.log("perdiste");
-                io.emit('perdiste') // si el numero de errores es igual a 7 envia el evento perdiste
+                console.log(palabra);
+                io.emit('perdiste', palabra) // si el numero de errores es igual a 7 envia el evento perdiste
             }
         }
     }
@@ -77,7 +93,7 @@ function turnosHandler(socketID) {
             jugador.turno = true
         }
         if (jugador.turno === false) {
-            io.emit('turno-de', jugador.ID)
+            io.emit('turno-de', jugador.ID , cont)
             if (jugadoresID.indexOf(jugador) === jugadoresID.length - 1) {
                 changeAllFalse()
             }
@@ -97,19 +113,37 @@ function getLetraIndex (letra) {
     return indices
 }
 
+function enviarLetrasCorrectas(socket) {
+    for (const letra of letrasCorrectas) {
+        let indices = getLetraIndex(letra)
+        io.to(socket.id).emit('letra-correcta', indices , letra)
+    }
+}
+
+function enviarLetrasIncorrectas(socket) {
+    for (let i = 0; i < letrasIncorrectas.length; i++) {
+        io.to(socket.id).emit('letra-erronea', hangman_ids[i])
+    }
+}
+
 io.on('connection', socket=> {
-    cont=0;
     ADDjugador(socket.id)
-    console.log(socket.id) // cada vez que hay connection, se imprime el id
+    console.log("se conecto : ID = " + socket.id) // cada vez que hay connection, se imprime el id
     io.to(socket.id).emit('palabra-size', palabra.length)
+    if (letrasCorrectas.length > 0) {
+        enviarLetrasCorrectas(socket)
+    }
+    if (letrasIncorrectas.length > 0) {
+        enviarLetrasIncorrectas(socket)
+        cont = letrasIncorrectas.length
+    }
     if (jugadoresID[0].ID === socket.id) {
         io.emit('turno-de', jugadoresID[0].ID)
         jugadoresID[0].turno = true
     }
-    console.log(jugadoresID)
 
     socket.on('disconnect', () => {
-        console.log('user disconnected' + socket.id)
+        console.log('se desconecto: ID = ' + socket.id)
         turnosHandler(socket.id)
         REMOVEjugador(socket.id)
     })
@@ -118,11 +152,24 @@ io.on('connection', socket=> {
         checkLetra(message)
         turnosHandler(socket.id)
         if (room === "") { // si esta en una room, envia el mensaje a esa room
-            socket.broadcast.emit('receive-message', message) // sino mandalo a todos
+            socket.broadcast.emit('receive-message', message , socket.id) // sino mandalo a todos
         } 
     })
 
     socket.on('join-room', room => {
         socket.join(room) // si recibe el evento join-room, se una a una room
+    })
+
+    socket.on('reiniciar-partida', () => {
+        cont = 0;
+        io.emit('vaciar-palabra', palabra.length)
+        getWord().then(() => {
+        io.emit('palabra-size', palabra.length)
+        io.emit('turno-de', jugadoresID[0].ID)
+        })
+        letrasCorrectas = []
+        letrasIncorrectas = []
+        jugadoresID[0].turno = true
+        changeAllFalse()
     })
 })

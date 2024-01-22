@@ -60,6 +60,12 @@ form input {
   margin-bottom: 30px;
 }
 
+.turno-error-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 /* CSS del modal */
 
 .modal {
