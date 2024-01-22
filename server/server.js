@@ -50,6 +50,7 @@ function removerLetras (letra) {
 }
 
 function checkLetra (letra) { //revisa si la letra esta en la palabra
+    letra = letra.toLocaleLowerCase()
     if ( palabra.includes(letra)) {
         let indices = getLetraIndex(letra) // consigue los indices de la letra en la palabra
         removerLetras(letra)
