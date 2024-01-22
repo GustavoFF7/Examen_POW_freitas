@@ -62,7 +62,7 @@ npm run dev
 - El anfitrion de esta aplicación es el servidor.
 - Se puede jugar de manera individual o multijugador.
 - El sistema de juego esta basado en turnos por jugador en la partida.
-- Las vidas de los jugadores son en conjunto y cada uno tiene su propio número de errores.
+- Las vidas de los jugadores son en conjunto y comparten el número de errores.
 - Tienes 7 vidas por partida.
 - Puede escribir las letras tanto en mayusculas como en minúsculas.
 - Puede cerrar el navegador y volver a ingresar a la partida sin problemas.
